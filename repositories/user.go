@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"context"
+	"github.com/truongnh28/environment-be/models"
 	"gorm.io/gorm"
-	"spotify/models"
 )
 
 type UserRepository interface {
