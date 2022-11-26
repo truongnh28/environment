@@ -178,6 +178,7 @@ func (s *RepostHandlerImpl) UpdateReport(context *gin.Context) {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
 		return
 	}
+	fmt.Print(body)
 	code := s.reportService.Update(context, body)
 	if code != common.OK {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
