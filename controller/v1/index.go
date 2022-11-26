@@ -18,7 +18,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 			__reportService = dependency.(services.ReportService)
 		case services.AuthenService:
 			__authenService = dependency.(services.AuthenService)
-
 		}
 	}
 
