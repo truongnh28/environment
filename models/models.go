@@ -19,6 +19,19 @@ type Reports struct {
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
 	ResolverID  int        `json:"resolver_id" gorm:"column:resolver_id"`
+	City        string     `json:"city" gorm:"column:city"`
+	District    string     `json:"district" gorm:"column:district"`
+	Street      string     `json:"street" gorm:"column:street"`
+	Ward        string     `json:"ward" gorm:"column:ward"`
+	Address     string     `json:"address" gorm:"column:address"`
+}
+
+type ReportFilter struct {
+	Status   *string `json:"status"`
+	City     *string `json:"city"`
+	District *string `json:"district"`
+	Street   *string `json:"street"`
+	Ward     *string `json:"ward"`
 }
 
 type Images struct {

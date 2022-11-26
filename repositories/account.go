@@ -2,16 +2,17 @@ package repositories
 
 import (
 	"context"
-	"gorm.io/gorm"
 	"spotify/models"
+
+	"gorm.io/gorm"
 )
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
-type AccountRepository interface {
-	GetByDomain(likeDomain string) ([]*models.Accounts, error)
-	Create(ctx context.Context, acc models.Accounts) error
-	FindByUserName(ctx context.Context, username string) (models.Accounts, error)
-	UpdateByUsername(ctx context.Context, username string, acc models.Accounts) (int64, error)
+type ReportRepository interface {
+	Create(ctx context.Context, record *models.Reports) (*models.Reports, error)
+	UpdateWithMap(ctx context.Context, record *models.Reports, params map[string]interface{}) error
+	GetByID(ctx context.Context, id int) (*models.Reports, error)
+	List(ctx context.Context, page int, size int, filter *models.ReportFilter) ([]*models.Reports, error)
 }
 
 type accountRepositoryImpl struct {
