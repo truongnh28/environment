@@ -1,15 +1,17 @@
 version: '3.7'
 services:
-  redis:
+  environment-redis:
     image: 'redis:alpine'
     container_name: redis_spotify
     environment:
       - ALLOW_EMPTY_PASSWORD=yes
     ports:
       - '6380:6379'
+    networks:
+      - environment-network
 
-  mysql:
-    container_name: mysql_spotify
+  environment-db:
+    container_name: environment
     image: mysql:8
     restart: always
     environment:
@@ -17,5 +19,20 @@ services:
       MYSQL_DATABASE: myspotify
     ports:
       - "3308:3306"
+    networks:
+      - environment-network
     volumes:
       - ./initdb:/docker-entrypoint-initdb.d
+  environment-be:
+    depends_on:
+      - environment-db
+      - environment-redis
+    image: truongnh28/environment
+    container_name: environment-bee
+    restart: always
+    ports:
+      - "8080:8080"
+    networks:
+      - environment-network
+networks:
+  environment-network:
