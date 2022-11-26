@@ -3,6 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/truongnh28/environment-be/config"
+	"github.com/truongnh28/environment-be/helper"
+	"github.com/truongnh28/environment-be/middleware"
 	"net/http"
 	"os"
 	"path"
@@ -31,27 +34,19 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
-	// Init instance
-	//jedis := getRedisClient()
-	//cldClient := client.GetCloudinaryAPI()
-	//get config
 	db := getDatabaseConnector()
-	// Init Repository
+
 	userRepo := repositories.NewUserRepository(db)
 	reportRepo := repositories.NewReportRepository(db)
-	//
+
 	userServices := services.NewUserService(userRepo)
 	reportService := services.NewReportService(reportRepo)
-	//userHandler := v1.NewUserHandler(userServices)
-	//userHandler.GetAllUser(context.Background())
-	// Init Service
-	//memoryCache := cache.NewMemoryCache()
+	authenService := services.NewAuthenService(helper.GetJWTInstance(), userRepo, config.AuthConfig())
 
-	// Init w
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	//router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.CORSMiddleware())
 	api := router.Group("/api")
 	healthAPI := router.Group("/")
 	healthAPI.GET("/info", getAll)
@@ -64,6 +59,7 @@ func main() {
 		api,
 		userServices,
 		reportService,
+		authenService,
 	)
 	glog.Infof("runing on port: %d ", 8080)
 	err = router.Run(":8080")
@@ -81,7 +77,6 @@ func getDatabaseConnector() *gorm.DB {
 		viper.GetString("app.database.database-name"))
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
-		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	if err != nil {

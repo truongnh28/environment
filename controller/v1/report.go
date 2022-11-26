@@ -178,12 +178,26 @@ func (s *RepostHandlerImpl) UpdateReport(context *gin.Context) {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
 		return
 	}
-	fmt.Print(body)
 	code := s.reportService.Update(context, body)
 	if code != common.OK {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
 		return
 	}
 	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
 
+func (s *RepostHandlerImpl) TopResolver(context *gin.Context) {
+	var (
+		out = &dto.TopResolverResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	response, code := s.reportService.TopResolver(context)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	out = &response
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
 }

@@ -7,6 +7,7 @@ import (
 
 var __userService services.UserService
 var __reportService services.ReportService
+var __authenService services.AuthenService
 
 func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 	for _, dependency := range dependencies {
@@ -15,15 +16,19 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 			__userService = dependency.(services.UserService)
 		case services.ReportService:
 			__reportService = dependency.(services.ReportService)
+		case services.AuthenService:
+			__authenService = dependency.(services.AuthenService)
 		}
 	}
-
-	//reportHandler := NewReportHandler(__userService])
 
 	userHandler := NewUserHandler(__userService)
 	reportHandler := NewReportHandler(__reportService)
 	v1 := g.Group("/v1")
-
+	authenRouter := v1.Group("/authen")
+	{
+		authenRouter.POST("login", login)
+		authenRouter.GET("logout", logout)
+	}
 	userRouter := v1.Group("/user")
 	{
 		userRouter.GET("get_all", userHandler.GetAllUser)
@@ -40,5 +45,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		reportRouter.POST("upload_file", reportHandler.UploadImage)
 		reportRouter.GET("get_all", reportHandler.GetAllReport)
 		reportRouter.POST("update", reportHandler.UpdateReport)
+		reportRouter.GET("top", reportHandler.TopResolver)
 	}
 }

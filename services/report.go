@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"sort"
 
 	"github.com/truongnh28/environment-be/helper/common"
 
@@ -11,7 +12,6 @@ import (
 	"github.com/truongnh28/environment-be/repositories"
 )
 
-//go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message dto.CreateReportRequest) (dto.CreateReportResponse, common.SubReturnCode)
 	GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode)
@@ -19,6 +19,7 @@ type ReportService interface {
 	MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode)
 	Update(ctx context.Context, message dto.UpdateReportRequest) common.SubReturnCode
 	GetAll(ctx context.Context) (dto.GetAllResponse, common.SubReturnCode)
+	TopResolver(ctx context.Context) (dto.TopResolverResponse, common.SubReturnCode)
 }
 
 func NewReportService(reportRepository repositories.ReportRepository) ReportService {
@@ -34,7 +35,7 @@ type reportServiceImpl struct {
 func (r *reportServiceImpl) Create(ctx context.Context, message dto.CreateReportRequest) (dto.CreateReportResponse, common.SubReturnCode) {
 	record := converter.FromReportDTO(&message)
 	record.Status = "draft"
-	record.ResolverID = 0
+	record.Resolver = ""
 	report, err := r.reportRepository.Create(ctx, record)
 	if err != nil {
 		glog.Infoln("Create service err: ", err)
@@ -97,7 +98,7 @@ func (r *reportServiceImpl) List(ctx context.Context, message dto.ListReportsReq
 			Author:      val.Author,
 			Lag:         val.Lag,
 			Lng:         val.Lng,
-			ResolverID:  val.ResolverID,
+			Resolver:    val.Resolver,
 			City:        val.City,
 			District:    val.District,
 			Street:      val.Street,
@@ -148,5 +149,44 @@ func (r *reportServiceImpl) GetAll(ctx context.Context) (dto.GetAllResponse, com
 	}
 	return dto.GetAllResponse{
 		Reports: reports,
+	}, common.OK
+}
+
+func (r *reportServiceImpl) TopResolver(ctx context.Context) (dto.TopResolverResponse, common.SubReturnCode) {
+	records, err := r.reportRepository.TopResolver(ctx)
+	if err != nil {
+		return dto.TopResolverResponse{}, common.SystemError
+	}
+	topResolver := map[string]int{}
+	for _, v := range records {
+		if _, ok := topResolver[v.Resolver]; !ok {
+			topResolver[v.Resolver] = 1
+		} else {
+			topResolver[v.Resolver] += 1
+		}
+	}
+	keys := make([]string, 0, len(topResolver))
+
+	for key := range topResolver {
+		keys = append(keys, key)
+	}
+	sort.SliceStable(keys, func(i, j int) bool {
+		return topResolver[keys[i]] > topResolver[keys[j]]
+	})
+
+	userNames := []string{}
+	totals := []int{}
+	dem := 0
+	for _, k := range keys {
+		dem += 1
+		if dem == 10 {
+			break
+		}
+		userNames = append(userNames, k)
+		totals = append(totals, topResolver[k])
+	}
+	return dto.TopResolverResponse{
+		UserNames: userNames,
+		Totals:    totals,
 	}, common.OK
 }

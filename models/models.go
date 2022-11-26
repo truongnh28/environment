@@ -19,7 +19,7 @@ type Reports struct {
 	Author      string     `json:"author" gorm:"column:author"`
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
-	ResolverID  int        `json:"resolver_id" gorm:"column:resolver_id"`
+	Resolver    string     `json:"resolver" gorm:"column:resolver"`
 	City        string     `json:"city" gorm:"column:city"`
 	District    string     `json:"district" gorm:"column:district"`
 	Street      string     `json:"street" gorm:"column:street"`
@@ -27,15 +27,6 @@ type Reports struct {
 	Address     string     `json:"address" gorm:"column:address"`
 	ImageURL    string     `json:"image_url" gorm:"column:image_url"`
 }
-
-//type ReportFilter struct {
-//	Status   *string `json:"status"`
-//	Priority *string `json:"priority"`
-//	City     *string `json:"city"`
-//	District *string `json:"district"`
-//	Street   *string `json:"street"`
-//	Ward     *string `json:"ward"`
-//}
 
 type Images struct {
 	*gorm.Model

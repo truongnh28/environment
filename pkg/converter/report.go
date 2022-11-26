@@ -35,7 +35,7 @@ func ToReportDTO(record *models.Reports) *dto.Report {
 	message.Author = record.Author
 	message.Lag = record.Lag
 	message.Lng = record.Lng
-	message.ResolverID = record.ResolverID
+	message.Resolver = record.Resolver
 	message.City = record.City
 	message.District = record.District
 	message.Street = record.Street
@@ -64,7 +64,7 @@ func FromReport(message dto.Report) *models.Reports {
 	report.Lag = message.Lag
 	report.Lng = message.Lng
 	report.Status = message.Status
-	report.ResolverID = message.ResolverID
+	report.Resolver = message.Resolver
 	report.ImageURL = message.ImageURL
 
 	return report
