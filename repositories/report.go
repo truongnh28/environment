@@ -11,7 +11,6 @@ import (
 	"gorm.io/gorm"
 )
 
-//go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportRepository interface {
 	Create(ctx context.Context, record *models.Reports) (*models.Reports, error)
 	UpdateWithMap(

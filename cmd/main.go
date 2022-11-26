@@ -34,24 +34,15 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
-	// Init instance
-	//jedis := getRedisClient()
-	//cldClient := client.GetCloudinaryAPI()
-	//get config
 	db := getDatabaseConnector()
-	// Init Repository
+
 	userRepo := repositories.NewUserRepository(db)
 	reportRepo := repositories.NewReportRepository(db)
-	//
+
 	userServices := services.NewUserService(userRepo)
 	reportService := services.NewReportService(reportRepo)
 	authenService := services.NewAuthenService(helper.GetJWTInstance(), userRepo, config.AuthConfig())
-	//userHandler := v1.NewUserHandler(userServices)
-	//userHandler.GetAllUser(context.Background())
-	// Init Service
-	//memoryCache := cache.NewMemoryCache()
 
-	// Init w
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
@@ -86,7 +77,6 @@ func getDatabaseConnector() *gorm.DB {
 		viper.GetString("app.database.database-name"))
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
 		Logger: logger.Default.LogMode(logger.Silent),
-		// Logger: logger.Default.LogMode(logger.Info),
 	})
 
 	if err != nil {

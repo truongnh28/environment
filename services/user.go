@@ -9,7 +9,6 @@ import (
 	"github.com/truongnh28/environment-be/repositories"
 )
 
-//go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type UserService interface {
 	GetAllUser() ([]dto.User, common.SubReturnCode)
 	GetUserByUsername(ctx context.Context, username string) (dto.User, common.SubReturnCode)

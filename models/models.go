@@ -28,15 +28,6 @@ type Reports struct {
 	ImageURL    string     `json:"image_url" gorm:"column:image_url"`
 }
 
-//type ReportFilter struct {
-//	Status   *string `json:"status"`
-//	Priority *string `json:"priority"`
-//	City     *string `json:"city"`
-//	District *string `json:"district"`
-//	Street   *string `json:"street"`
-//	Ward     *string `json:"ward"`
-//}
-
 type Images struct {
 	*gorm.Model
 	ID       string `json:"id" gorm:"column:id"`

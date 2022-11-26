@@ -12,7 +12,6 @@ import (
 	"github.com/truongnh28/environment-be/repositories"
 )
 
-//go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message dto.CreateReportRequest) (dto.CreateReportResponse, common.SubReturnCode)
 	GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode)
