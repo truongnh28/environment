@@ -37,6 +37,7 @@ type ReportService interface {
 	List(ctx context.Context, message dto.ListReportsRequest) (dto.ListReportsResponse, common.SubReturnCode)
 	MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode)
 	Update(ctx context.Context, message *dto.UpdateReportRequest) error
+	GetAll(ctx context.Context) (dto.GetAllResponse, common.SubReturnCode)
 }
 
 func NewReportService(reportRepository repositories.ReportRepository) ReportService {
@@ -147,4 +148,18 @@ func (r *reportServiceImpl) MapReportList(ctx context.Context) ([]dto.MapResp, c
 		})
 	}
 	return resp, common.OK
+}
+
+func (r *reportServiceImpl) GetAll(ctx context.Context) (dto.GetAllResponse, common.SubReturnCode) {
+	resp, err := r.reportRepository.GetAll(ctx)
+	if err != nil {
+		return dto.GetAllResponse{}, common.SystemError
+	}
+	var reports []dto.Report
+	for _, val := range resp {
+		reports = append(reports, *converter.ToReportDTO(&val))
+	}
+	return dto.GetAllResponse{
+		Reports: reports,
+	}, common.OK
 }

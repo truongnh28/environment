@@ -20,7 +20,7 @@ type Report struct {
 	Street      string     `json:"street,omitempty"`
 	Ward        string     `json:"ward,omitempty"`
 	Address     string     `json:"address,omitempty"`
-	Images      []string   `json:"images,omitempty"`
+	ImageURL    string     `json:"image_url,omitempty"`
 }
 
 type CreateReportRequest struct {
@@ -35,6 +35,7 @@ type CreateReportRequest struct {
 	Address     *string `json:"address,omitempty"`
 	Lag         float32 `json:"lag,omitemty"`
 	Lng         float32 `json:"lng,omitempty"`
+	ImageURL    string  `json:"image_url"`
 }
 
 type CreateReportResponse struct {
@@ -96,5 +97,10 @@ type MapResp struct {
 }
 type MapResponse struct {
 	MapResps []MapResp `json:"data"`
+	StatusError
+}
+
+type GetAllResponse struct {
+	Reports []Report
 	StatusError
 }
