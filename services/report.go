@@ -10,25 +10,6 @@ import (
 	"github.com/truongnh28/environment-be/repositories"
 )
 
-//Create(ctx context.Context, record *models.Reports) (*models.Reports, error)
-//UpdateWithMap(
-//	octx context.Context,
-//	record *models.Reports,
-//	params map[string]interface{},
-//) error
-//GetByID(ctx context.Context, id int) (*models.Reports, error)
-//List(
-//	octx context.Context,
-//	size int,
-//	page int,
-//	filter *models.ReportFilter,
-//) ([]*models.Reports, error)
-//Delete(octx context.Context, record *models.Reports) error
-//CountWithFilter(
-//	octx context.Context,
-//	filter *models.ReportFilter,
-//) (int64, error)
-
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
