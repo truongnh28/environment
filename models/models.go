@@ -19,7 +19,7 @@ type Reports struct {
 	Author      string     `json:"author" gorm:"column:author"`
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
-	ResolverID  int        `json:"resolver_id" gorm:"column:resolver_id"`
+	Resolver    string     `json:"resolver" gorm:"column:resolver"`
 	City        string     `json:"city" gorm:"column:city"`
 	District    string     `json:"district" gorm:"column:district"`
 	Street      string     `json:"street" gorm:"column:street"`

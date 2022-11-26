@@ -45,5 +45,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		reportRouter.POST("upload_file", reportHandler.UploadImage)
 		reportRouter.GET("get_all", reportHandler.GetAllReport)
 		reportRouter.POST("update", reportHandler.UpdateReport)
+		reportRouter.GET("top", reportHandler.TopResolver)
 	}
 }
