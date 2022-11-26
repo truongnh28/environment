@@ -1,4 +1,4 @@
-module spotify
+module github.com/truongnh28/environment-be
 
 go 1.19
 

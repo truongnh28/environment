@@ -4,10 +4,10 @@ import (
 	"encoding/json"
 	"sync"
 
-	"spotify/config"
-	"spotify/dto"
+	"github.com/truongnh28/environment-be/config"
+	"github.com/truongnh28/environment-be/dto"
 
-	"spotify/utils/auth"
+	"github.com/truongnh28/environment-be/utils/auth"
 )
 
 var (

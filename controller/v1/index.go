@@ -4,7 +4,8 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// var __songService services.SongService
+var __reportService services.reportService
+
 //var __authenService services.AuthenService
 
 func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
@@ -17,9 +18,9 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		}
 	}
 
-	//songHandler := NewSongHandler(__songService)
+	reportHandler := NewReportHandler(__reportService)
 
-	//v1 := g.Group("/v1")
+	v1 := g.Group("/v1")
 
 	// Authen
 	//authenRouter := v1.Group("/authen")
@@ -27,9 +28,8 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 	//	authenRouter.POST("login", login)
 	//	authenRouter.GET("logout", logout)
 	//}
-	//songRouter := v1.Group("/song")
-	//{
-	//	songRouter.Use(middleware.HTTPAuthentication)
-	//	songRouter.GET("", songHandler.GetAll)
-	//}
+	reportRouter := v1.Group("/report")
+	{
+		reportRouter.POST("/post_report", reportHandler.PostReport)
+	}
 }
