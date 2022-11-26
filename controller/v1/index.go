@@ -5,10 +5,6 @@ import (
 	"github.com/truongnh28/environment-be/services"
 )
 
-//var __reportService services.reportService
-
-//var __authenService services.AuthenService
-
 var __userService services.UserService
 
 func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
@@ -16,8 +12,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		switch dependency.(type) {
 		case services.UserService:
 			__userService = dependency.(services.UserService)
-			//case services.AuthenService:
-			//	__authenService = dependency.(services.AuthenService)
 		}
 	}
 
@@ -30,5 +24,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 	userRouter := v1.Group("/user")
 	{
 		userRouter.GET("get_all", userHandler.GetAllUser)
+		userRouter.POST("login", userHandler.Login)
 	}
 }
