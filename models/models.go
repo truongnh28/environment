@@ -27,14 +27,14 @@ type Reports struct {
 	Address     string     `json:"address" gorm:"column:address"`
 }
 
-type ReportFilter struct {
-	Status   *string `json:"status"`
-	Priority *string `json:"priority"`
-	City     *string `json:"city"`
-	District *string `json:"district"`
-	Street   *string `json:"street"`
-	Ward     *string `json:"ward"`
-}
+//type ReportFilter struct {
+//	Status   *string `json:"status"`
+//	Priority *string `json:"priority"`
+//	City     *string `json:"city"`
+//	District *string `json:"district"`
+//	Street   *string `json:"street"`
+//	Ward     *string `json:"ward"`
+//}
 
 type Images struct {
 	*gorm.Model
@@ -56,7 +56,6 @@ type Users struct {
 	Email      string     `json:"email" gorm:"column:email"`
 	Phone      string     `json:"phone" gorm:"column:phone"`
 }
-
 
 type Table interface {
 	TableName() string

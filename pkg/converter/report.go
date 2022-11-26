@@ -1,8 +1,8 @@
-package converters
+package converter
 
 import (
-	"spotify/dto"
-	"spotify/models"
+	"github.com/truongnh28/environment-be/dto"
+	"github.com/truongnh28/environment-be/models"
 )
 
 func FromReportDTO(message *dto.CreateReportRequest) *models.Reports {

@@ -2,7 +2,9 @@ package repositories
 
 import (
 	"context"
-	"spotify/models"
+	"github.com/truongnh28/environment-be/dto"
+
+	"github.com/truongnh28/environment-be/models"
 
 	ot "github.com/opentracing/opentracing-go"
 	"gorm.io/gorm"
@@ -17,17 +19,9 @@ type ReportRepository interface {
 		params map[string]interface{},
 	) error
 	GetByID(ctx context.Context, id int) (*models.Reports, error)
-	List(
-		octx context.Context,
-		size int,
-		page int,
-		filter *models.ReportFilter,
-	) ([]*models.Reports, error)
+	List(octx context.Context, size int, page int, filter *dto.FilterReport) ([]*models.Reports, error)
 	Delete(octx context.Context, record *models.Reports) error
-	CountWithFilter(
-		octx context.Context,
-		filter *models.ReportFilter,
-	) (int64, error)
+	CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error)
 }
 
 type ReportSQLRepo struct {
@@ -71,11 +65,7 @@ func (r *ReportSQLRepo) Delete(octx context.Context, record *models.Reports) err
 	return r.dbWithContext(ctx).Delete(record).Error
 }
 
-func (r *ReportSQLRepo) buildQueryFromFilter(
-	ctx context.Context,
-	query *gorm.DB,
-	filter *models.ReportFilter,
-) *gorm.DB {
+func (r *ReportSQLRepo) buildQueryFromFilter(ctx context.Context, query *gorm.DB, filter *dto.FilterReport) *gorm.DB {
 	if filter == nil {
 		return query
 	}
@@ -106,7 +96,7 @@ func (r *ReportSQLRepo) List(
 	octx context.Context,
 	size int,
 	page int,
-	filter *models.ReportFilter,
+	filter *dto.FilterReport,
 ) ([]*models.Reports, error) {
 	span, ctx := ot.StartSpanFromContext(octx, "ReportSQLRepo_List")
 	defer span.Finish()
@@ -119,10 +109,7 @@ func (r *ReportSQLRepo) List(
 }
 
 // CountWithFilter
-func (r *ReportSQLRepo) CountWithFilter(
-	octx context.Context,
-	filter *models.ReportFilter,
-) (int64, error) {
+func (r *ReportSQLRepo) CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error) {
 	span, ctx := ot.StartSpanFromContext(octx, "ReportSQLRepo_CountWithFilter")
 	defer span.Finish()
 
