@@ -3,6 +3,8 @@ package main
 import (
 	"flag"
 	"fmt"
+	"github.com/truongnh28/environment-be/config"
+	"github.com/truongnh28/environment-be/helper"
 	"net/http"
 	"os"
 	"path"
@@ -42,6 +44,7 @@ func main() {
 	//
 	userServices := services.NewUserService(userRepo)
 	reportService := services.NewReportService(reportRepo)
+	authenService := services.NewAuthenService(helper.GetJWTInstance(), userRepo, config.AuthConfig())
 	//userHandler := v1.NewUserHandler(userServices)
 	//userHandler.GetAllUser(context.Background())
 	// Init Service
@@ -64,6 +67,7 @@ func main() {
 		api,
 		userServices,
 		reportService,
+		authenService,
 	)
 	glog.Infof("runing on port: %d ", 8080)
 	err = router.Run(":8080")
