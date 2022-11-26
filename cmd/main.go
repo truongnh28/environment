@@ -1,17 +1,11 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
 	"github.com/golang/glog"
 	"github.com/spf13/viper"
-	"github.com/truongnh28/environment-be/cache"
-	"github.com/truongnh28/environment-be/client"
-	"github.com/truongnh28/environment-be/config"
 	v1 "github.com/truongnh28/environment-be/controller/v1"
 	"github.com/truongnh28/environment-be/repositories"
 	"github.com/truongnh28/environment-be/services"
@@ -21,7 +15,6 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"time"
 )
 
@@ -39,24 +32,20 @@ func main() {
 	}
 	// Init instance
 	//jedis := getRedisClient()
-	cldClient := client.GetCloudinaryAPI()
+	//cldClient := client.GetCloudinaryAPI()
 	//get config
 	db := getDatabaseConnector()
 	// Init Repository
 	userRepo := repositories.NewUserRepository(db)
+	reportRepo := repositories.NewReportRepository(db)
+	//
 	userServices := services.NewUserService(userRepo)
+	reportService := services.NewReportService(reportRepo)
 	//userHandler := v1.NewUserHandler(userServices)
 	//userHandler.GetAllUser(context.Background())
 	// Init Service
 	//memoryCache := cache.NewMemoryCache()
 
-	resp, err := cldClient.UploadImage(context.Background(), "img.png")
-	if err != nil {
-		fmt.Println("err ")
-		fmt.Println(err)
-	}
-	e, _ := json.Marshal(resp)
-	fmt.Println(string(e))
 	// Init w
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
@@ -73,43 +62,12 @@ func main() {
 	v1.InitRoutes(
 		api,
 		userServices,
+		reportService,
 	)
 	glog.Infof("runing on port: %d ", 8080)
 	err = router.Run(":8080")
 	if err != nil {
 		panic(fmt.Sprintf("Cannot start web application with error: %v", err))
-	}
-}
-
-//	func getCloudinaryClient() *cloudinary.Cloudinary {
-//		const cldUrl = "cloudinary://512616158545567:mClhxuKZ9F-EsP4Kjm_s5qccdvk@dbk0cmzcb"
-//		var cld, err = cloudinary.NewFromURL(cldUrl)
-//		if err != nil {
-//			//log.Fatalf("Failed to intialize Cloudinary, %v", err)
-//			panic(fmt.Errorf("unable to connect to cloudinary: %v", err.Error()))
-//		}
-//		return cld
-//	}
-func getRedisClient() cache.RedisClient {
-
-	if viper.GetBool("app.redis.usecluster") {
-		redisClient := redis.NewClusterClient(&redis.ClusterOptions{
-			Addrs:    strings.Split(viper.GetString("app.redis.cluster.url"), ";"),
-			Password: viper.GetString("app.redis.cluster.password"),
-		})
-		if err := redisClient.Ping(context.Background()).Err(); err != nil {
-			panic(fmt.Errorf("unable to connect to redis cluster: %v", err.Error()))
-		}
-		return cache.NewRedisClusterClient(redisClient)
-	} else {
-		redisClient := redis.NewClient(&redis.Options{
-			Addr:     viper.GetString("app.redis.single.url"),
-			Password: viper.GetString("app.redis.single.password"),
-		})
-		if err := redisClient.Ping(context.Background()).Err(); err != nil {
-			panic(fmt.Errorf("unable to connect to redis: %v", err.Error()))
-		}
-		return cache.NewRedisSingleClient(redisClient)
 	}
 }
 
@@ -146,18 +104,6 @@ func getAll(c *gin.Context) {
 
 func getVersion(c *gin.Context) {
 	c.JSON(http.StatusOK, os.Getenv("image_tag"))
-}
-
-func getLDAPConfig() *config.LDAP {
-	return &config.LDAP{
-		Addr:        viper.GetString("app.ldap.addr"),
-		UseTls:      viper.GetBool("app.ldap.useTls"),
-		Username:    viper.GetString("app.ldap.username"),
-		Password:    viper.GetString("app.ldap.password"),
-		BaseDN:      viper.GetString("app.ldap.baseDN"),
-		ObjectClass: viper.GetString("app.ldap.objectClass"),
-		Timeout:     viper.GetInt64("app.ldap.timeout"),
-	}
 }
 
 func extractConfigPath() (string, string) {

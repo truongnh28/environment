@@ -1,31 +1,29 @@
 package v1
 
-//import (
-//	"fmt"
-//	"github.com/gin-gonic/gin"
-//	"github.com/truongnh28/environment-be/client"
-//	"github.com/truongnh28/environment-be/dto"
-//	"github.com/truongnh28/environment-be/helper"
-//	"github.com/truongnh28/environment-be/helper/common"
-//	"io"
-//	"log"
-//	"os"
-//)
-//
-//type RepostHandlerImpl struct {
-//	cloudinaryService client.CloudinaryAPI
-//	//reportService     services.reportService
-//}
-//
-//func NewReportHandler(cloudinaryService client.CloudinaryAPI) *RepostHandlerImpl {
-//	return &RepostHandlerImpl{
-//		cloudinaryService: cloudinaryService,
-//	}
-//}
-//
-//func (s *RepostHandlerImpl) PostReport(context *gin.Context) {
+import (
+	"context"
+	"github.com/gin-gonic/gin"
+	"github.com/truongnh28/environment-be/client"
+	"github.com/truongnh28/environment-be/dto"
+	"github.com/truongnh28/environment-be/helper"
+	"github.com/truongnh28/environment-be/helper/common"
+	"github.com/truongnh28/environment-be/services"
+)
+
+type RepostHandlerImpl struct {
+	cloudinaryService client.CloudinaryAPI
+	reportService     services.ReportService
+}
+
+func NewReportHandler(reportService services.ReportService) *RepostHandlerImpl {
+	return &RepostHandlerImpl{
+		reportService: __reportService,
+	}
+}
+
+//func (s *RepostHandlerImpl) MapResponseList(context *gin.Context) {
 //	var (
-//		out = &dto.ReportResponse{}
+//		out = &dto.MapResponse{}
 //	)
 //	defer func() {
 //		context.JSON(200, out)
@@ -51,3 +49,20 @@ package v1
 //	out.Reports = response
 //	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
 //}
+
+func (s *RepostHandlerImpl) MapResponseList(c *gin.Context) {
+	var (
+		out = &dto.MapResponse{}
+		ctx = context.Background()
+	)
+	defer func() {
+		c.JSON(200, out)
+	}()
+	response, code := s.reportService.MapReportList(ctx)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, code)
+		return
+	}
+	out.MapResps = response
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
