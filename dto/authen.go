@@ -1,8 +1,8 @@
 package dto
 
 type LoginRequest struct {
-	Username string `json:"username,omitempty"`
-	Password string `json:"password,omitempty"`
+	Username string `json:"user_name,omitempty"`
+	Password string `json:"pass_word,omitempty"`
 }
 
 type LoginResponseData struct {
