@@ -47,12 +47,15 @@ func (u *userServiceImpl) GetUserByUsername(ctx context.Context, username string
 }
 
 func (u *userServiceImpl) Login(ctx context.Context, username, password string) (dto.User, common.SubReturnCode) {
-	_, err := u.userRepo.Login(ctx, username, password)
+	user, err := u.userRepo.Login(ctx, username, password)
 	if err != nil {
 		glog.Infoln("Login service err: ", err)
 		return dto.User{}, common.UsernameOrPasswordIncorrect
 	}
-	return dto.User{}, common.OK
+	return dto.User{
+		UserName:   user.UserName,
+		IsResolver: user.IsResolver,
+	}, common.OK
 }
 
 func (u *userServiceImpl) Register(ctx context.Context, register dto.User) (dto.User, common.SubReturnCode) {
