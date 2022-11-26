@@ -2,7 +2,6 @@ package services
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/truongnh28/environment-be/helper/common"
 
@@ -53,10 +52,9 @@ func (r *reportServiceImpl) Update(ctx context.Context, message dto.UpdateReport
 	if err != nil {
 		return common.SystemError
 	}
-	var params map[string]interface{}
+	params := map[string]interface{}{}
 	params["status"] = message.Status
 	params["resolver_id"] = message.Resolver
-	fmt.Print(params["status"])
 	err = r.reportRepository.UpdateWithMap(ctx, record, params)
 	if err != nil {
 		return common.SystemError
