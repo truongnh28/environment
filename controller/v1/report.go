@@ -4,12 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"github.com/cloudinary/cloudinary-go/v2"
-	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"io"
 	"log"
 	"os"
 	"strconv"
+
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 
 	"github.com/gin-gonic/gin"
 	"github.com/truongnh28/environment-be/client"
@@ -30,9 +31,9 @@ func NewReportHandler(reportService services.ReportService) *RepostHandlerImpl {
 	}
 }
 
-func (s *RepostHandlerImpl) MapResponseList1(context *gin.Context) {
+func (s *RepostHandlerImpl) UploadImage(context *gin.Context) {
 	var (
-		out = &dto.MapResponse{}
+		out = &dto.UploadImageResponse{}
 	)
 	defer func() {
 		context.JSON(200, out)
@@ -64,14 +65,8 @@ func (s *RepostHandlerImpl) MapResponseList1(context *gin.Context) {
 		log.Fatalf("Failed to upload file, %v\n", err)
 	}
 	url := uploadResult.URL
-	fmt.Println("url: ", url)
-
-	// response, code := s.reportService.GetAllSong()
-	// if code != common.OK {
-	// 	helper.BuildResponseByReturnCode(out, common.Fail, code)
-	// 	return
-	// }
-	// out.Reports = response
+	out.Url = url
+	os.Remove(path)
 	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
 }
 
@@ -169,4 +164,25 @@ func (s *RepostHandlerImpl) GetAllReport(context *gin.Context) {
 	}
 	out = &response
 	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
+
+func (s *RepostHandlerImpl) UpdateReport(context *gin.Context) {
+	var (
+		out = &dto.UpdateReportResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	var body dto.UpdateReportRequest
+	if err := json.NewDecoder(context.Request.Body).Decode(&body); err != nil {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	code := s.reportService.Update(context, body)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+
 }

@@ -3,6 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
+	"os"
+	"path"
+	"time"
+
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"
 	"github.com/spf13/viper"
@@ -12,10 +17,6 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
-	"net/http"
-	"os"
-	"path"
-	"time"
 )
 
 func main() {

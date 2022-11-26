@@ -66,13 +66,13 @@ type FilterReport struct {
 }
 
 type UpdateReportRequest struct {
-	Record   Report `json:"record"`
+	ID       int    `json:"id"`
 	Status   string `json:"status"`
 	Resolver int    `json:"resolver"`
 }
 
 type UpdateReportResponse struct {
-	report Report
+	StatusError
 }
 
 type GetReportByIDRequest struct {
@@ -102,5 +102,10 @@ type MapResponse struct {
 
 type GetAllResponse struct {
 	Reports []Report
+	StatusError
+}
+
+type UploadImageResponse struct {
+	Url string `json:"url"`
 	StatusError
 }

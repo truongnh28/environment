@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/truongnh28/environment-be/helper/common"
 
@@ -17,7 +18,7 @@ type ReportService interface {
 	GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode)
 	List(ctx context.Context, message dto.ListReportsRequest) (dto.ListReportsResponse, common.SubReturnCode)
 	MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode)
-	Update(ctx context.Context, message *dto.UpdateReportRequest) error
+	Update(ctx context.Context, message dto.UpdateReportRequest) common.SubReturnCode
 	GetAll(ctx context.Context) (dto.GetAllResponse, common.SubReturnCode)
 }
 
@@ -47,14 +48,20 @@ func (r *reportServiceImpl) Create(ctx context.Context, message dto.CreateReport
 	return resp, common.OK
 }
 
-func (r *reportServiceImpl) Update(ctx context.Context, message *dto.UpdateReportRequest) error {
-	record := converter.FromReport(message.Record)
+func (r *reportServiceImpl) Update(ctx context.Context, message dto.UpdateReportRequest) common.SubReturnCode {
+	record, err := r.reportRepository.GetByID(ctx, message.ID)
+	if err != nil {
+		return common.SystemError
+	}
 	var params map[string]interface{}
 	params["status"] = message.Status
 	params["resolver_id"] = message.Resolver
-	err := r.reportRepository.UpdateWithMap(ctx, record, params)
-
-	return err
+	fmt.Print(params["status"])
+	err = r.reportRepository.UpdateWithMap(ctx, record, params)
+	if err != nil {
+		return common.SystemError
+	}
+	return common.OK
 }
 
 func (r *reportServiceImpl) GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode) {
