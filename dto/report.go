@@ -14,7 +14,7 @@ type Report struct {
 	Author      string     `json:"author,omitempty"`
 	Lag         float32    `json:"lag,omitempty"`
 	Lng         float32    `json:"lng,omitempty"`
-	ResolverID  int        `json:"resolver_id,omitempty"`
+	Resolver    string     `json:"resolver,omitempty"`
 	City        string     `json:"city,omitempty"`
 	District    string     `json:"district,omitempty"`
 	Street      string     `json:"street,omitempty"`
@@ -68,7 +68,7 @@ type FilterReport struct {
 type UpdateReportRequest struct {
 	ID       int    `json:"id"`
 	Status   string `json:"status"`
-	Resolver int    `json:"resolver"`
+	Resolver string `json:"resolver"`
 }
 
 type UpdateReportResponse struct {

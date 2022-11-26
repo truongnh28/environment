@@ -16,7 +16,22 @@ type User struct {
 	Phone      string     `json:"phone" gorm:"column:phone"`
 }
 
+type TopUser struct {
+	ID           string `json:"id" gorm:"column:id"`
+	UserName     string `json:"user_name" gorm:"column:user_name"`
+	Email        string `json:"email" gorm:"column:email"`
+	Phone        string `json:"phone" gorm:"column:phone"`
+	Top          int    `json:"top"`
+	TotalResolve int    `json:"total_resolve"`
+}
+
 type UserResponse struct {
 	Users []User
+	StatusError
+}
+
+type TopResolverResponse struct {
+	UserNames []string
+	Totals    []int
 	StatusError
 }

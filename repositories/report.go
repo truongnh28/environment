@@ -24,6 +24,7 @@ type ReportRepository interface {
 	Delete(octx context.Context, record *models.Reports) error
 	CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error)
 	GetAll(ctx context.Context) ([]models.Reports, error)
+	TopResolver(ctx context.Context) ([]*models.Reports, error)
 }
 
 type reportRepositoryImpl struct {
@@ -144,4 +145,14 @@ func (r *reportRepositoryImpl) GetByID(octx context.Context, id int) (*models.Re
 	err := query.Find(&record).Error
 
 	return record, err
+}
+
+func (r *reportRepositoryImpl) TopResolver(ctx context.Context) ([]*models.Reports, error) {
+	var records []*models.Reports
+	query := r.dbWithContext(ctx)
+	status := "resolved"
+	query = query.Where("status = ?", status)
+	err := query.Find(&records).Error
+
+	return records, err
 }
