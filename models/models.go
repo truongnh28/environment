@@ -15,6 +15,7 @@ type Reports struct {
 	UpdatedAt   *time.Time `json:"updated_at" gorm:"column:updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at" gorm:"column:deleted_at"`
 	Status      string     `json:"status" gorm:"column:status"`
+	Priority    string     `json:"priority" gorm:"column:priority"`
 	Author      string     `json:"author" gorm:"column:author"`
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
@@ -28,6 +29,7 @@ type Reports struct {
 
 type ReportFilter struct {
 	Status   *string `json:"status"`
+	Priority *string `json:"priority"`
 	City     *string `json:"city"`
 	District *string `json:"district"`
 	Street   *string `json:"street"`
@@ -51,77 +53,3 @@ type Users struct {
 	Email      string `json:"email" gorm:"column:email"`
 	Phone      string `json:"phone" gorm:"column:phone"`
 }
-
-// type AccountStatus string
-
-// const (
-// 	Active  AccountStatus = "Active"
-// 	Blocked AccountStatus = "Blocked"
-// )
-
-// type AccountRole string
-
-// const (
-// 	SuperAdmin AccountRole = "SuperAdmin"
-// 	Admin      AccountRole = "Admin"
-// 	User       AccountRole = "User"
-// )
-
-// var (
-// 	priority = map[AccountRole]int{
-// 		SuperAdmin: 0,
-// 		Admin:      -1,
-// 		User:       -2,
-// 	}
-// )
-
-// func (a AccountRole) CanChange(ar AccountRole) bool {
-// 	return priority[a] > priority[ar]
-// }
-
-// func (a AccountRole) IsValid() bool {
-// 	_, ok := priority[a]
-// 	return ok
-// }
-
-// // Status enum
-// type Status byte
-
-// const (
-// 	InitialStatus = iota
-// 	WaitingForScanStatus
-// 	ScanningStatus
-// 	ScannedStatus
-// )
-
-// type Table interface {
-// 	TableName() string
-// }
-
-// func (Albums) TableName() string {
-// 	return "albums"
-// }
-
-// func (Artists) TableName() string {
-// 	return "artists"
-// }
-
-// func (Interactions) TableName() string {
-// 	return "interactions"
-// }
-
-// func (PlayLists) TableName() string {
-// 	return "playlists"
-// }
-
-// func (PlayListSongs) TableName() string {
-// 	return "playlist_songs"
-// }
-
-// func (Songs) TableName() string {
-// 	return "songs"
-// }
-
-// func (Accounts) TableName() string {
-// 	return "accounts"
-// }
