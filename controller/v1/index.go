@@ -29,6 +29,7 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		userRouter.GET("get_all", userHandler.GetAllUser)
 		userRouter.POST("login", userHandler.Login)
 		userRouter.POST("register", userHandler.Register)
+		userRouter.POST("change_info", userHandler.ChangeInfo)
 	}
 	reportRouter := v1.Group("/report")
 	{

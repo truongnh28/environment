@@ -2,6 +2,7 @@ package v1
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/truongnh28/environment-be/dto"
 	"github.com/truongnh28/environment-be/helper"
@@ -84,12 +85,34 @@ func (s *UserHandlerImpl) Register(context *gin.Context) {
 	defer func() {
 		context.JSON(200, out)
 	}()
-	var body dto.Register
+	var body dto.User
 	if err := json.NewDecoder(context.Request.Body).Decode(&body); err != nil {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
 		return
 	}
 	response, code := s.userService.Register(context, body)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	out.Users = []dto.User{response}
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
+
+func (s *UserHandlerImpl) ChangeInfo(context *gin.Context) {
+	var (
+		out = &dto.UserResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	m := make(map[string]interface{})
+	if err := json.NewDecoder(context.Request.Body).Decode(&m); err != nil {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	fmt.Println("mapData: ", m)
+	response, code := s.userService.ChangeInfo(context, m)
 	if code != common.OK {
 		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
 		return

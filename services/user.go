@@ -13,7 +13,8 @@ type UserService interface {
 	GetAllUser() ([]dto.User, common.SubReturnCode)
 	GetUserByUsername(ctx context.Context, username string) (dto.User, common.SubReturnCode)
 	Login(ctx context.Context, username, password string) (dto.User, common.SubReturnCode)
-	Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode)
+	Register(ctx context.Context, register dto.User) (dto.User, common.SubReturnCode)
+	ChangeInfo(ctx context.Context, m map[string]interface{}) (dto.User, common.SubReturnCode)
 }
 
 func NewUserService(userRepo repositories.UserRepository) UserService {
@@ -54,7 +55,7 @@ func (u *userServiceImpl) Login(ctx context.Context, username, password string) 
 	return dto.User{}, common.OK
 }
 
-func (u *userServiceImpl) Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode) {
+func (u *userServiceImpl) Register(ctx context.Context, register dto.User) (dto.User, common.SubReturnCode) {
 
 	_, err := u.userRepo.Register(ctx, register)
 	if err != nil {
@@ -64,6 +65,15 @@ func (u *userServiceImpl) Register(ctx context.Context, register dto.Register) (
 	return dto.User{}, common.OK
 }
 
+func (u *userServiceImpl) ChangeInfo(ctx context.Context, m map[string]interface{}) (dto.User, common.SubReturnCode) {
+
+	_, err := u.userRepo.ChangeInfo(ctx, m)
+	if err != nil {
+		glog.Infoln("ChangeInfo service err: ", err)
+		return dto.User{}, common.SystemError
+	}
+	return dto.User{}, common.OK
+}
 func (u *userServiceImpl) GetAllUser() ([]dto.User, common.SubReturnCode) {
 	var resp = make([]dto.User, 0)
 	users, err := u.userRepo.GetAllUsers()
