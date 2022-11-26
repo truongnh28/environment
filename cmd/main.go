@@ -2,26 +2,25 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/glog"
 	"github.com/spf13/viper"
+	"github.com/truongnh28/environment-be/cache"
+	"github.com/truongnh28/environment-be/client"
+	"github.com/truongnh28/environment-be/config"
+	v1 "github.com/truongnh28/environment-be/controller/v1"
+	"github.com/truongnh28/environment-be/repositories"
+	"github.com/truongnh28/environment-be/services"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"net/http"
 	"os"
 	"path"
-	"spotify/cache"
-	"spotify/config"
-	v1 "spotify/controller/v1"
-	"spotify/helper"
-	"spotify/middleware"
-	"spotify/models"
-	"spotify/repositories"
-	"spotify/services"
 	"strings"
 	"time"
 )
@@ -39,23 +38,30 @@ func main() {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
 	// Init instance
-	jedis := getRedisClient()
+	//jedis := getRedisClient()
+	cldClient := client.GetCloudinaryAPI()
 	//get config
 	db := getDatabaseConnector()
 	// Init Repository
-	songRepo := repositories.NewSongRepository(db)
-	accountRepository := repositories.NewAccountRepository(db)
+	userRepo := repositories.NewUserRepository(db)
+	userServices := services.NewUserService(userRepo)
+	//userHandler := v1.NewUserHandler(userServices)
+	//userHandler.GetAllUser(context.Background())
 	// Init Service
 	//memoryCache := cache.NewMemoryCache()
-	redisCache := cache.NewServerCacheRedis(jedis)
-	songService := services.NewSongService(songRepo)
-	authenService := services.NewAuthenService(helper.GetJWTInstance(), redisCache, accountRepository, config.AuthConfig())
-	accountService := services.NewAccountService(accountRepository, redisCache, config.AuthConfig())
+
+	resp, err := cldClient.UploadImage(context.Background(), "img.png")
+	if err != nil {
+		fmt.Println("err ")
+		fmt.Println(err)
+	}
+	e, _ := json.Marshal(resp)
+	fmt.Println(string(e))
 	// Init w
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	router.Use(middleware.CORSMiddleware())
+	//router.Use(middleware.CORSMiddleware())
 	api := router.Group("/api")
 	healthAPI := router.Group("/")
 	healthAPI.GET("/info", getAll)
@@ -66,9 +72,7 @@ func main() {
 
 	v1.InitRoutes(
 		api,
-		songService,
-		authenService,
-		accountService,
+		userServices,
 	)
 	glog.Infof("runing on port: %d ", 8080)
 	err = router.Run(":8080")
@@ -77,6 +81,15 @@ func main() {
 	}
 }
 
+//	func getCloudinaryClient() *cloudinary.Cloudinary {
+//		const cldUrl = "cloudinary://512616158545567:mClhxuKZ9F-EsP4Kjm_s5qccdvk@dbk0cmzcb"
+//		var cld, err = cloudinary.NewFromURL(cldUrl)
+//		if err != nil {
+//			//log.Fatalf("Failed to intialize Cloudinary, %v", err)
+//			panic(fmt.Errorf("unable to connect to cloudinary: %v", err.Error()))
+//		}
+//		return cld
+//	}
 func getRedisClient() cache.RedisClient {
 
 	if viper.GetBool("app.redis.usecluster") {
@@ -116,15 +129,6 @@ func getDatabaseConnector() *gorm.DB {
 		panic(fmt.Errorf("failed to connect database, error: %v", err))
 	}
 
-	db.AutoMigrate(
-		models.Songs{},
-		models.Albums{},
-		models.PlayLists{},
-		models.Artists{},
-		models.Interactions{},
-		models.PlayListSongs{},
-		models.Accounts{},
-	)
 	sqlDB, err := db.DB()
 	if err != nil {
 		panic(err)

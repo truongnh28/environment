@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"spotify/helper/common"
+	"github.com/truongnh28/environment-be/helper/common"
 )
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks

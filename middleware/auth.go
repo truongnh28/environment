@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"spotify/cache"
-	"spotify/dto"
-	"spotify/helper"
+	"github.com/truongnh28/environment-be/cache"
+	"github.com/truongnh28/environment-be/dto"
+	"github.com/truongnh28/environment-be/helper"
 
-	"spotify/helper/common"
+	"github.com/truongnh28/environment-be/helper/common"
 
 	"github.com/gin-gonic/gin"
 	"github.com/golang/glog"

@@ -2,36 +2,33 @@ package v1
 
 import (
 	"github.com/gin-gonic/gin"
-	"spotify/middleware"
-	"spotify/services"
+	"github.com/truongnh28/environment-be/services"
 )
 
-var __songService services.SongService
-var __authenService services.AuthenService
+//var __reportService services.reportService
+
+//var __authenService services.AuthenService
+
+var __userService services.UserService
 
 func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 	for _, dependency := range dependencies {
 		switch dependency.(type) {
-		case services.SongService:
-			__songService = dependency.(services.SongService)
-		case services.AuthenService:
-			__authenService = dependency.(services.AuthenService)
+		case services.UserService:
+			__userService = dependency.(services.UserService)
+			//case services.AuthenService:
+			//	__authenService = dependency.(services.AuthenService)
 		}
 	}
 
-	songHandler := NewSongHandler(__songService)
+	//reportHandler := NewReportHandler(__userService])
+
+	userHandler := NewUserHandler(__userService)
 
 	v1 := g.Group("/v1")
 
-	// Authen
-	authenRouter := v1.Group("/authen")
+	userRouter := v1.Group("/user")
 	{
-		authenRouter.POST("login", login)
-		authenRouter.GET("logout", logout)
-	}
-	songRouter := v1.Group("/song")
-	{
-		songRouter.Use(middleware.HTTPAuthentication)
-		songRouter.GET("", songHandler.GetAll)
+		userRouter.GET("get_all", userHandler.GetAllUser)
 	}
 }

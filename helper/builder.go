@@ -3,7 +3,7 @@ package helper
 import (
 	"reflect"
 
-	"spotify/helper/common"
+	"github.com/truongnh28/environment-be/helper/common"
 )
 
 var (
