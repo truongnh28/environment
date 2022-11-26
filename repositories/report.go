@@ -2,7 +2,8 @@ package repositories
 
 import (
 	"context"
-	"spotify/models"
+
+	"github.com/truongnh28/environment-be/models"
 
 	ot "github.com/opentracing/opentracing-go"
 	"gorm.io/gorm"
