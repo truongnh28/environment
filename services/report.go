@@ -129,6 +129,7 @@ func (r *reportServiceImpl) MapReportList(ctx context.Context) ([]dto.MapResp, c
 	}
 	for _, val := range respReports {
 		resp = append(resp, dto.MapResp{
+			Title:    val.Title,
 			ReportId: val.ID,
 			Priority: val.Priority,
 			Lat:      val.Lag,

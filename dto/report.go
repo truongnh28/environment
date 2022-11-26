@@ -90,6 +90,7 @@ type ReportResponse struct {
 }
 
 type MapResp struct {
+	Title    string  `json:"title"`
 	ReportId int     `json:"report_id"`
 	Priority int     `json:"priority"`
 	Lat      float32 `json:"lat"`
