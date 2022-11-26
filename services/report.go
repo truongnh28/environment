@@ -30,8 +30,9 @@ import (
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
-	GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse
+	GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error)
 	List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error)
+	// UpdateWithMap(ctx context.Context, *dto.UpdateReportRequest) error
 }
 
 func NewReportService(reportRepository repositories.ReportRepository) ReportService {
@@ -43,6 +44,33 @@ func NewReportService(reportRepository repositories.ReportRepository) ReportServ
 type reportServiceImpl struct {
 	reportRepository repositories.ReportRepository
 }
+
+
+
+func (r *reportService) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
+	record := converter.FromReportDTO(message)
+	report, err := r.reportRepo.Create(ctx, record)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &dto.CreateReportResponse{
+		Report: *converter.ToReportDTO(report),
+	}
+	return resp, nil
+}
+
+func (r *reportService) List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error) {
+
+}
+
+// func (r *reportService) UpdateWithMap(ctx context.Context, message *dto.UpdateReportRequest) error {
+// 	params := map[string]interface{}
+// 	for v := range message.FieldMask {
+// 		params[v] =
+// 	}
+// 	err := r.reportRepo.UpdateWithMap(octx, record.)
+// }
 
 func (r *reportServiceImpl) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
 	//TODO implement me
@@ -95,3 +123,4 @@ func (r *reportServiceImpl) List(ctx context.Context, message *dto.ListReportsRe
 	resp.Page = message.Page
 	return &resp, nil
 }
+

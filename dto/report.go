@@ -35,7 +35,7 @@ type CreateReportRequest struct {
 }
 
 type CreateReportResponse struct {
-	report Report
+	Report Report `json:"report"`
 }
 
 type ListReportsRequest struct {
@@ -61,8 +61,9 @@ type FilterReport struct {
 }
 
 type UpdateReportRequest struct {
-	Record    Report   `json:"record"`
-	FieldMask []string `json:"FieldMask"`
+	Record   Report `json:"record"`
+	Status   string `json:"status"`
+	Resolver int    `json:"resolver"`
 }
 
 type UpdateReportResponse struct {
