@@ -2,45 +2,20 @@ package services
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/golang/glog"
-	"github.com/google/uuid"
-	"github.com/truongnh28/environment-be/cache"
-	"github.com/truongnh28/environment-be/config"
-	"github.com/truongnh28/environment-be/pkg/converter"
 	"github.com/truongnh28/environment-be/dto"
 	"github.com/truongnh28/environment-be/helper/common"
-	"github.com/truongnh28/environment-be/models"
+	"github.com/truongnh28/environment-be/pkg/converter"
 	"github.com/truongnh28/environment-be/repositories"
 )
-
-
-Create(ctx context.Context, record *models.Reports) (*models.Reports, error)
-UpdateWithMap(
-	octx context.Context,
-	record *models.Reports,
-	params map[string]interface{},
-) error
-GetByID(ctx context.Context, id int) (*models.Reports, error)
-List(
-	octx context.Context,
-	size int,
-	page int,
-	filter *models.ReportFilter,
-) ([]*models.Reports, error)
-Delete(octx context.Context, record *models.Reports) error
-CountWithFilter(
-	octx context.Context,
-	filter *models.ReportFilter,
-) (int64, error)
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
-	GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse
+	GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error)
 	List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error)
+	// UpdateWithMap(ctx context.Context, *dto.UpdateReportRequest) error
 }
 
 func NewReportService(reportRepo repositories.ReportRepository) ReportService {
@@ -52,7 +27,6 @@ func NewReportService(reportRepo repositories.ReportRepository) ReportService {
 type reportService struct {
 	reportRepo repositories.ReportRepository
 }
-
 
 func (s *songServiceImpl) GetAllSong() ([]dto.Song, common.SubReturnCode) {
 	var resp = make([]dto.Song, 0)
@@ -79,15 +53,26 @@ func (s *songServiceImpl) GetAllSong() ([]dto.Song, common.SubReturnCode) {
 }
 
 func (r *reportService) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
-	record := converter.FromReportDTO(*message)
-	report, err := r.reportRepo.Create(ctx, &record)
+	record := converter.FromReportDTO(message)
+	report, err := r.reportRepo.Create(ctx, record)
 	if err != nil {
-		retturn nil, err
+		return nil, err
 	}
-	return record
-}
 
+	resp := &dto.CreateReportResponse{
+		Report: *converter.ToReportDTO(report),
+	}
+	return resp, nil
+}
 
 func (r *reportService) List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error) {
-	
+
 }
+
+// func (r *reportService) UpdateWithMap(ctx context.Context, message *dto.UpdateReportRequest) error {
+// 	params := map[string]interface{}
+// 	for v := range message.FieldMask {
+// 		params[v] =
+// 	}
+// 	err := r.reportRepo.UpdateWithMap(octx, record.)
+// }
