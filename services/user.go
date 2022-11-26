@@ -13,6 +13,7 @@ type UserService interface {
 	GetAllUser() ([]dto.User, common.SubReturnCode)
 	GetUserByUsername(ctx context.Context, username string) (dto.User, common.SubReturnCode)
 	Login(ctx context.Context, username, password string) (dto.User, common.SubReturnCode)
+	Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode)
 }
 
 func NewUserService(userRepo repositories.UserRepository) UserService {
@@ -49,6 +50,16 @@ func (u *userServiceImpl) Login(ctx context.Context, username, password string) 
 	if err != nil {
 		glog.Infoln("Login service err: ", err)
 		return dto.User{}, common.UsernameOrPasswordIncorrect
+	}
+	return dto.User{}, common.OK
+}
+
+func (u *userServiceImpl) Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode) {
+
+	_, err := u.userRepo.Register(ctx, register)
+	if err != nil {
+		glog.Infoln("Register service err: ", err)
+		return dto.User{}, common.SystemError
 	}
 	return dto.User{}, common.OK
 }

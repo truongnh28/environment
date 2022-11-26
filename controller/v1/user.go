@@ -76,3 +76,24 @@ func (s *UserHandlerImpl) Login(context *gin.Context) {
 	out.Users = []dto.User{response}
 	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
 }
+
+func (s *UserHandlerImpl) Register(context *gin.Context) {
+	var (
+		out = &dto.UserResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	var body dto.Register
+	if err := json.NewDecoder(context.Request.Body).Decode(&body); err != nil {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	response, code := s.userService.Register(context, body)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	out.Users = []dto.User{response}
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
