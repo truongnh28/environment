@@ -3,16 +3,17 @@ package services
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/golang/glog"
 	"github.com/google/uuid"
 	"github.com/truongnh28/environment-be/cache"
 	"github.com/truongnh28/environment-be/config"
+	"github.com/truongnh28/environment-be/pkg/converter"
 	"github.com/truongnh28/environment-be/dto"
 	"github.com/truongnh28/environment-be/helper/common"
 	"github.com/truongnh28/environment-be/models"
-	"github.com/truongnh28/environment-be/converters"
 	"github.com/truongnh28/environment-be/repositories"
-	"time"
 )
 
 
@@ -37,9 +38,9 @@ CountWithFilter(
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
-	Create(ctx context.Context, message dto.CreateReportRequest) dto.CreateReportResponse
+	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
 	GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse
-	List(ctx context.Context, message dto.ListReportsRequest) dto.ListReportsResponse
+	List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error)
 }
 
 func NewReportService(reportRepo repositories.ReportRepository) ReportService {
@@ -77,7 +78,16 @@ func (s *songServiceImpl) GetAllSong() ([]dto.Song, common.SubReturnCode) {
 	return resp, common.OK
 }
 
-func (r *reportService) Create(ctx context.Context, message dto.CreateReportRequest) dto.CreateReportResponse {
-	record := converters.From
-	report, err := r.reportRepo.Create(ctx, )
+func (r *reportService) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
+	record := converter.FromReportDTO(*message)
+	report, err := r.reportRepo.Create(ctx, &record)
+	if err != nil {
+		retturn nil, err
+	}
+	return record
+}
+
+
+func (r *reportService) List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error) {
+	
 }
