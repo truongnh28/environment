@@ -13,6 +13,8 @@ import (
 	"github.com/truongnh28/environment-be/client"
 	"github.com/truongnh28/environment-be/config"
 	v1 "github.com/truongnh28/environment-be/controller/v1"
+	"github.com/truongnh28/environment-be/repositories"
+	"github.com/truongnh28/environment-be/services"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -39,9 +41,12 @@ func main() {
 	//jedis := getRedisClient()
 	cldClient := client.GetCloudinaryAPI()
 	//get config
-	//db := getDatabaseConnector()
+	db := getDatabaseConnector()
 	// Init Repository
-
+	userRepo := repositories.NewUserRepository(db)
+	userServices := services.NewUserService(userRepo)
+	//userHandler := v1.NewUserHandler(userServices)
+	//userHandler.GetAllUser(context.Background())
 	// Init Service
 	//memoryCache := cache.NewMemoryCache()
 
@@ -67,6 +72,7 @@ func main() {
 
 	v1.InitRoutes(
 		api,
+		userServices,
 	)
 	glog.Infof("runing on port: %d ", 8080)
 	err = router.Run(":8080")
