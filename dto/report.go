@@ -20,6 +20,7 @@ type Report struct {
 	Street      string     `json:"street,omitempty"`
 	Ward        string     `json:"ward,omitempty"`
 	Address     string     `json:"address,omitempty"`
+	Images      []string   `json:"images,omitempty"`
 }
 
 type CreateReportRequest struct {
