@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+
 	"github.com/truongnh28/environment-be/dto"
 
 	"github.com/truongnh28/environment-be/models"
@@ -18,7 +19,7 @@ type ReportRepository interface {
 		record *models.Reports,
 		params map[string]interface{},
 	) error
-	GetByID(ctx context.Context, id int) (*models.Reports, error)
+	GetByID(octx context.Context, id int) (*models.Reports, error)
 	List(octx context.Context, size int, page int, filter *dto.FilterReport) ([]*models.Reports, error)
 	Delete(octx context.Context, record *models.Reports) error
 	CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error)
@@ -120,4 +121,16 @@ func (r *ReportSQLRepo) CountWithFilter(octx context.Context, filter *dto.Filter
 	query = r.buildQueryFromFilter(ctx, query, filter)
 	err := query.Find(&records).Count(&c).Error
 	return c, err
+}
+
+func (r *ReportSQLRepo) GetByID(octx context.Context, id int) (*models.Reports, error) {
+	span, ctx := ot.StartSpanFromContext(octx, "ReportSQLRepo_Get")
+	defer span.Finish()
+	var record *models.Reports
+
+	query := r.dbWithContext(ctx)
+	query = query.Where("id = ?", id)
+	err := query.Find(&record).Error
+
+	return record, err
 }

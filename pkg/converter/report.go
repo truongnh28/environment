@@ -42,3 +42,26 @@ func ToReportDTO(record *models.Reports) *dto.Report {
 
 	return message
 }
+
+func FromReport(message dto.Report) *models.Reports {
+	report := &models.Reports{}
+	report.Title = message.Title
+	report.Description = message.Description
+	report.Priority = message.Priority
+	report.Author = message.Author
+	report.City = message.City
+	report.District = message.District
+	report.Street = message.Street
+	report.Ward = message.Ward
+	report.Address = message.Address
+	report.CreatedAt = message.CreatedAt
+	report.UpdatedAt = message.UpdatedAt
+	report.DeletedAt = message.DeletedAt
+	report.ID = message.ID
+	report.Lag = message.Lag
+	report.Lng = message.Lng
+	report.Status = message.Status
+	report.ResolverID = message.ResolverID
+
+	return report
+}
