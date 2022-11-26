@@ -16,9 +16,9 @@ services:
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 123456
-      MYSQL_DATABASE: myspotify
+      MYSQL_DATABASE: environment
     ports:
-      - "3308:3306"
+      - "3306:3306"
     networks:
       - environment-network
     volumes:
