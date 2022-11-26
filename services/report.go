@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+
 	"github.com/truongnh28/environment-be/helper/common"
 
 	"github.com/golang/glog"
@@ -12,9 +13,9 @@ import (
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
-	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
-	GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error)
-	List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error)
+	Create(ctx context.Context, message dto.CreateReportRequest) (dto.CreateReportResponse, common.SubReturnCode)
+	GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode)
+	List(ctx context.Context, message dto.ListReportsRequest) (dto.ListReportsResponse, common.SubReturnCode)
 	MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode)
 	Update(ctx context.Context, message *dto.UpdateReportRequest) error
 }
@@ -29,17 +30,20 @@ type reportServiceImpl struct {
 	reportRepository repositories.ReportRepository
 }
 
-func (r *reportServiceImpl) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
-	record := converter.FromReportDTO(message)
+func (r *reportServiceImpl) Create(ctx context.Context, message dto.CreateReportRequest) (dto.CreateReportResponse, common.SubReturnCode) {
+	record := converter.FromReportDTO(&message)
+	record.Status = "draft"
+	record.ResolverID = 0
 	report, err := r.reportRepository.Create(ctx, record)
 	if err != nil {
-		return nil, err
+		glog.Infoln("Create service err: ", err)
+		return dto.CreateReportResponse{}, common.SystemError
 	}
 
-	resp := &dto.CreateReportResponse{
+	resp := dto.CreateReportResponse{
 		Report: *converter.ToReportDTO(report),
 	}
-	return resp, nil
+	return resp, common.OK
 }
 
 func (r *reportServiceImpl) Update(ctx context.Context, message *dto.UpdateReportRequest) error {
@@ -52,18 +56,19 @@ func (r *reportServiceImpl) Update(ctx context.Context, message *dto.UpdateRepor
 	return err
 }
 
-func (r *reportServiceImpl) GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error) {
+func (r *reportServiceImpl) GetByID(ctx context.Context, message dto.GetReportByIDRequest) (dto.GetReportByIDResponse, common.SubReturnCode) {
 	record, err := r.reportRepository.GetByID(ctx, message.ID)
 	if err != nil {
-		return nil, err
+		glog.Infoln("Create service err: ", err)
+		return dto.GetReportByIDResponse{}, common.SystemError
 	}
 
-	return &dto.GetReportByIDResponse{
+	return dto.GetReportByIDResponse{
 		Report: *converter.ToReportDTO(record),
-	}, nil
+	}, common.OK
 }
 
-func (r *reportServiceImpl) List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error) {
+func (r *reportServiceImpl) List(ctx context.Context, message dto.ListReportsRequest) (dto.ListReportsResponse, common.SubReturnCode) {
 	var (
 		resp    dto.ListReportsResponse
 		reports = make([]*dto.Report, 0)
@@ -97,7 +102,12 @@ func (r *reportServiceImpl) List(ctx context.Context, message *dto.ListReportsRe
 	resp.Reports = reports
 	resp.Size = message.Size
 	resp.Page = message.Page
-	return &resp, nil
+	countResp, err := r.reportRepository.CountWithFilter(ctx, message.Filter)
+	if err != nil {
+		glog.Errorf("Get List in report service err: ", err)
+	}
+	resp.TotalItems = int(countResp)
+	return resp, common.OK
 }
 
 func (r *reportServiceImpl) MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode) {

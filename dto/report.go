@@ -10,7 +10,7 @@ type Report struct {
 	UpdatedAt   *time.Time `json:"updated_at,omitempty"`
 	DeletedAt   *time.Time `json:"deleted_at,omitempty"`
 	Status      string     `json:"status,omitempty"`
-	Priority    string     `json:"priority,omitempty"`
+	Priority    int        `json:"priority,omitempty"`
 	Author      string     `json:"author,omitempty"`
 	Lag         float32    `json:"lag,omitempty"`
 	Lng         float32    `json:"lng,omitempty"`
@@ -26,17 +26,20 @@ type Report struct {
 type CreateReportRequest struct {
 	Title       string  `json:"title,omitempty"`
 	Description string  `json:"description,omitempty"`
-	Priority    string  `json:"priority,omitempty"`
+	Priority    int     `json:"priority,omitempty"`
 	UserName    string  `json:"user_name,omitempty"`
 	City        string  `json:"city,omitempty"`
 	District    string  `json:"district,omitempty"`
 	Street      string  `json:"street,omitempty"`
 	Ward        string  `json:"ward,omitempty"`
 	Address     *string `json:"address,omitempty"`
+	Lag         float32 `json:"lag,omitemty"`
+	Lng         float32 `json:"lng,omitempty"`
 }
 
 type CreateReportResponse struct {
 	Report Report `json:"report"`
+	StatusError
 }
 
 type ListReportsRequest struct {
@@ -54,7 +57,7 @@ type ListReportsResponse struct {
 
 type FilterReport struct {
 	Status   *string `json:"status"`
-	Priority *string `json:"priority"`
+	Priority *int    `json:"priority"`
 	City     *string `json:"city"`
 	District *string `json:"district"`
 	Street   *string `json:"street"`
@@ -77,6 +80,7 @@ type GetReportByIDRequest struct {
 
 type GetReportByIDResponse struct {
 	Report Report `json:"report,omitempty"`
+	StatusError
 }
 
 type ReportResponse struct {
@@ -86,7 +90,7 @@ type ReportResponse struct {
 
 type MapResp struct {
 	ReportId int     `json:"report_id"`
-	Priority string  `json:"priority"`
+	Priority int     `json:"priority"`
 	Lat      float32 `json:"lat"`
 	Lng      float32 `json:"lng"`
 }

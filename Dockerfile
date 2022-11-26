@@ -36,18 +36,18 @@ RUN go mod download
 COPY . .
 
 # Build app
-RUN --mount=type=cache,id=cache-go,target=$CACHE_DIR/.cache CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o spotify ./cmd/main.go
-CMD chmod +x /app/spotify
+RUN --mount=type=cache,id=cache-go,target=$CACHE_DIR/.cache CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build  -o environment ./cmd/main.go
+CMD chmod +x /app/environment
 
 # final stage
 FROM base
 # Copy binary from builder
 WORKDIR /app
 
-COPY --from=builder /app/spotify /app/spotify
+COPY --from=builder /app/environment /app/environment
 COPY --from=builder /app/config /app/config
 
 # List expose port(s)
 EXPOSE 8080
 # Run server command
-ENTRYPOINT ["./spotify"]
+ENTRYPOINT ["./environment"]

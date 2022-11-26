@@ -38,6 +38,7 @@ func GetCloudinaryAPI() CloudinaryAPI {
 
 func (c *cloudinaryAPI) UploadImage(ctx context.Context, imagePath string) (*uploader.UploadResult, error) {
 	resp, err := c.client.Upload.Upload(ctx, imagePath, uploader.UploadParams{})
+	fmt.Println("SOS")
 	if err != nil {
 		return nil, err
 	}
