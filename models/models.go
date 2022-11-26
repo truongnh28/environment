@@ -15,7 +15,7 @@ type Reports struct {
 	UpdatedAt   *time.Time `json:"updated_at" gorm:"column:updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at" gorm:"column:deleted_at"`
 	Status      string     `json:"status" gorm:"column:status"`
-	Priority    string     `json:"priority" gorm:"column:priority"`
+	Priority    int        `json:"priority" gorm:"column:priority"`
 	Author      string     `json:"author" gorm:"column:author"`
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
