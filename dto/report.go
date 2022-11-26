@@ -92,3 +92,14 @@ type ReportResponse struct {
 	Reports []Report
 	StatusError
 }
+
+type MapResp struct {
+	ReportId int     `json:"report_id"`
+	Priority string  `json:"priority"`
+	Lat      float32 `json:"lat"`
+	Lng      float32 `json:"lng"`
+}
+type MapResponse struct {
+	MapResps []MapResp `json:"data"`
+	StatusError
+}

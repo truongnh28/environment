@@ -22,29 +22,35 @@ type ReportRepository interface {
 	List(octx context.Context, size int, page int, filter *dto.FilterReport) ([]*models.Reports, error)
 	Delete(octx context.Context, record *models.Reports) error
 	CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error)
+	GetAll(ctx context.Context) ([]models.Reports, error)
 }
 
-type ReportSQLRepo struct {
-	db *gorm.DB
+type reportRepositoryImpl struct {
+	database *gorm.DB
 }
 
-func NewReportSQLRepo(db *gorm.DB) *ReportSQLRepo {
-	return &ReportSQLRepo{
-		db: db,
+func (r *reportRepositoryImpl) GetByID(ctx context.Context, id int) (*models.Reports, error) {
+	//TODO implement me
+	panic("implement me")
+}
+
+func NewReportRepository(db *gorm.DB) ReportRepository {
+	return &reportRepositoryImpl{
+		database: db,
 	}
 }
 
-func (r *ReportSQLRepo) dbWithContext(ctx context.Context) *gorm.DB {
-	return r.db.WithContext(ctx)
+func (r *reportRepositoryImpl) dbWithContext(ctx context.Context) *gorm.DB {
+	return r.database.WithContext(ctx)
 }
 
-func (r *ReportSQLRepo) Create(ctx context.Context, record *models.Reports) (*models.Reports, error) {
+func (r *reportRepositoryImpl) Create(ctx context.Context, record *models.Reports) (*models.Reports, error) {
 	err := r.dbWithContext(ctx).Create(record).Error
 	return record, err
 }
 
 // UpdateWithMap ...
-func (r *ReportSQLRepo) UpdateWithMap(
+func (r *reportRepositoryImpl) UpdateWithMap(
 	octx context.Context,
 	record *models.Reports,
 	params map[string]interface{},
@@ -58,14 +64,14 @@ func (r *ReportSQLRepo) UpdateWithMap(
 }
 
 // Delete ...
-func (r *ReportSQLRepo) Delete(octx context.Context, record *models.Reports) error {
+func (r *reportRepositoryImpl) Delete(octx context.Context, record *models.Reports) error {
 	span, ctx := ot.StartSpanFromContext(octx, "ReportSQLRepo_Delete")
 	defer span.Finish()
 
 	return r.dbWithContext(ctx).Delete(record).Error
 }
 
-func (r *ReportSQLRepo) buildQueryFromFilter(ctx context.Context, query *gorm.DB, filter *dto.FilterReport) *gorm.DB {
+func (r *reportRepositoryImpl) buildQueryFromFilter(ctx context.Context, query *gorm.DB, filter *dto.FilterReport) *gorm.DB {
 	if filter == nil {
 		return query
 	}
@@ -92,7 +98,7 @@ func (r *ReportSQLRepo) buildQueryFromFilter(ctx context.Context, query *gorm.DB
 }
 
 // ListByObject ...
-func (r *ReportSQLRepo) List(
+func (r *reportRepositoryImpl) List(
 	octx context.Context,
 	size int,
 	page int,
@@ -109,7 +115,7 @@ func (r *ReportSQLRepo) List(
 }
 
 // CountWithFilter
-func (r *ReportSQLRepo) CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error) {
+func (r *reportRepositoryImpl) CountWithFilter(octx context.Context, filter *dto.FilterReport) (int64, error) {
 	span, ctx := ot.StartSpanFromContext(octx, "ReportSQLRepo_CountWithFilter")
 	defer span.Finish()
 
@@ -120,4 +126,15 @@ func (r *ReportSQLRepo) CountWithFilter(octx context.Context, filter *dto.Filter
 	query = r.buildQueryFromFilter(ctx, query, filter)
 	err := query.Find(&records).Count(&c).Error
 	return c, err
+}
+
+func (r *reportRepositoryImpl) GetAll(ctx context.Context) ([]models.Reports, error) {
+	var (
+		resp = make([]models.Reports, 0)
+	)
+	err := r.database.WithContext(ctx).Model(models.Reports{}).Find(&resp).Error
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
