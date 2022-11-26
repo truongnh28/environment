@@ -27,12 +27,6 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 
 	v1 := g.Group("/v1")
 
-	// Authen
-	//authenRouter := v1.Group("/authen")
-	//{
-	//	authenRouter.POST("login", login)
-	//	authenRouter.GET("logout", logout)
-	//}
 	userRouter := v1.Group("/user")
 	{
 		userRouter.GET("get_all", userHandler.GetAllUser)
