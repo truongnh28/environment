@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/truongnh28/environment-be/config"
 	"github.com/truongnh28/environment-be/helper"
+	"github.com/truongnh28/environment-be/middleware"
 	"net/http"
 	"os"
 	"path"
@@ -54,7 +55,7 @@ func main() {
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	//router.Use(middleware.CORSMiddleware())
+	router.Use(middleware.CORSMiddleware())
 	api := router.Group("/api")
 	healthAPI := router.Group("/")
 	healthAPI.GET("/info", getAll)
