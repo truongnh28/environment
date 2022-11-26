@@ -33,10 +33,13 @@ type CreateReportRequest struct {
 	Street      string  `json:"street,omitempty"`
 	Ward        string  `json:"ward,omitempty"`
 	Address     *string `json:"address,omitempty"`
+	Lag         float32 `json:"lag,omitemty"`
+	Lng         float32 `json:"lng,omitempty"`
 }
 
 type CreateReportResponse struct {
 	Report Report `json:"report"`
+	StatusError
 }
 
 type ListReportsRequest struct {
@@ -77,6 +80,7 @@ type GetReportByIDRequest struct {
 
 type GetReportByIDResponse struct {
 	Report Report `json:"report,omitempty"`
+	StatusError
 }
 
 type ReportResponse struct {

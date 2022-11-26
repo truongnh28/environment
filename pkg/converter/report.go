@@ -16,6 +16,8 @@ func FromReportDTO(message *dto.CreateReportRequest) *models.Reports {
 	report.Street = message.Street
 	report.Ward = message.Ward
 	report.Address = *message.Address
+	report.Lag = message.Lag
+	report.Lng = message.Lng
 
 	return report
 }
