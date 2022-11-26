@@ -74,8 +74,7 @@ type GetReportByIDRequest struct {
 }
 
 type GetReportByIDResponse struct {
-	Report Report `json:"report,omitempty"`
-=======
+	Report      Report     `json:"report,omitempty"`
 	ID          int        `json:"id"`
 	Title       string     `json:"title"`
 	Description string     `json:"description"`
@@ -92,3 +91,4 @@ type GetReportByIDResponse struct {
 type ReportResponse struct {
 	Reports []Report
 	StatusError
+}
