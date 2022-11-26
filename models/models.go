@@ -15,10 +15,25 @@ type Reports struct {
 	UpdatedAt   *time.Time `json:"updated_at" gorm:"column:updated_at"`
 	DeletedAt   *time.Time `json:"deleted_at" gorm:"column:deleted_at"`
 	Status      string     `json:"status" gorm:"column:status"`
+	Priority    string     `json:"priority" gorm:"column:priority"`
 	Author      string     `json:"author" gorm:"column:author"`
 	Lag         float32    `json:"lag" gorm:"column:lag"`
 	Lng         float32    `json:"lng" gorm:"column:lng"`
 	ResolverID  int        `json:"resolver_id" gorm:"column:resolver_id"`
+	City        string     `json:"city" gorm:"column:city"`
+	District    string     `json:"district" gorm:"column:district"`
+	Street      string     `json:"street" gorm:"column:street"`
+	Ward        string     `json:"ward" gorm:"column:ward"`
+	Address     string     `json:"address" gorm:"column:address"`
+}
+
+type ReportFilter struct {
+	Status   *string `json:"status"`
+	Priority *string `json:"priority"`
+	City     *string `json:"city"`
+	District *string `json:"district"`
+	Street   *string `json:"street"`
+	Ward     *string `json:"ward"`
 }
 
 type Images struct {
@@ -41,6 +56,7 @@ type Users struct {
 	Email      string     `json:"email" gorm:"column:email"`
 	Phone      string     `json:"phone" gorm:"column:phone"`
 }
+
 
 type Table interface {
 	TableName() string
