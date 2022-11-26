@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
+	"log"
+	"os"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
@@ -25,34 +28,40 @@ func NewReportHandler(reportService services.ReportService) *RepostHandlerImpl {
 	}
 }
 
-//func (s *RepostHandlerImpl) MapResponseList(context *gin.Context) {
-//	var (
-//		out = &dto.MapResponse{}
-//	)
-//	defer func() {
-//		context.JSON(200, out)
-//	}()
-//	file, header, err := context.Request.FormFile("image")
-//	filename := header.Filename
-//	outImg, err := os.Create("./tmp/" + filename + ".png")
-//	fmt.Println(header.Filename)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//	defer outImg.Close()
-//	_, err = io.Copy(outImg, file)
-//	if err != nil {
-//		log.Fatal(err)
-//	}
-//
-//	//response, code := s.reportService.GetAllSong()
-//	if code != common.OK {
-//		helper.BuildResponseByReturnCode(out, common.Fail, code)
-//		return
-//	}
-//	out.Reports = response
-//	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
-//}
+func (s *RepostHandlerImpl) MapResponseList1(context *gin.Context) {
+	var (
+		out = &dto.MapResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	file, header, err := context.Request.FormFile("image")
+	filename := header.Filename
+	path := "./tmp/" + filename
+	outImg, err := os.Create(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer outImg.Close()
+	_, err = io.Copy(outImg, file)
+	if err != nil {
+		log.Fatal(err)
+	}
+	res, err := s.cloudinaryService.UploadImage(context, path)
+	if err != nil {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+
+	fmt.Println("res data: ", res.URL)
+	// response, code := s.reportService.GetAllSong()
+	// if code != common.OK {
+	// 	helper.BuildResponseByReturnCode(out, common.Fail, code)
+	// 	return
+	// }
+	// out.Reports = response
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
 
 func (s *RepostHandlerImpl) MapResponseList(c *gin.Context) {
 	var (
