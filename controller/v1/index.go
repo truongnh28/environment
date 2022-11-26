@@ -38,6 +38,7 @@ func InitRoutes(g *gin.RouterGroup, dependencies ...interface{}) {
 		reportRouter.GET("get_by_id", reportHandler.GetReportByID)
 		reportRouter.POST("list", reportHandler.ListReport)
 		reportRouter.POST("upload_file", reportHandler.MapResponseList1)
+		reportRouter.GET("get_all", reportHandler.GetAllReport)
 
 	}
 }
