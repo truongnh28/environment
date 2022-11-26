@@ -1,4 +1,4 @@
-package converters
+package converter
 
 import (
 	"github.com/truongnh28/environment-be/dto"
