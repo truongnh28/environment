@@ -25,6 +25,7 @@ type Reports struct {
 	Street      string     `json:"street" gorm:"column:street"`
 	Ward        string     `json:"ward" gorm:"column:ward"`
 	Address     string     `json:"address" gorm:"column:address"`
+	ImageURL    string     `json:"image_url" gorm:"column:image_url"`
 }
 
 //type ReportFilter struct {

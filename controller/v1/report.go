@@ -142,3 +142,19 @@ func (s *RepostHandlerImpl) ListReport(context *gin.Context) {
 	out = &response
 	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
 }
+
+func (s *RepostHandlerImpl) GetAllReport(context *gin.Context) {
+	var (
+		out = &dto.GetAllResponse{}
+	)
+	defer func() {
+		context.JSON(200, out)
+	}()
+	response, code := s.reportService.GetAll(context)
+	if code != common.OK {
+		helper.BuildResponseByReturnCode(out, common.Fail, common.SystemError)
+		return
+	}
+	out = &response
+	helper.BuildResponseByReturnCode(out, common.Success, common.OK)
+}
