@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/gin-gonic/gin"
 	"github.com/go-redis/redis/v8"
 	"github.com/golang/glog"
@@ -11,14 +13,14 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"log"
 	"net/http"
 	"os"
 	"path"
 	"spotify/cache"
+	"spotify/client"
 	"spotify/config"
 	v1 "spotify/controller/v1"
-	"spotify/helper"
-	"spotify/middleware"
 	"spotify/models"
 	"spotify/repositories"
 	"spotify/services"
@@ -38,6 +40,10 @@ func main() {
 	if err != nil {
 		panic(fmt.Errorf("fatal error config file: %s", err))
 	}
+	cld, err := cloudinary.New()
+	if err != nil {
+		log.Fatalf("Failed to intialize Cloudinary, %v", err)
+	}
 	// Init instance
 	jedis := getRedisClient()
 	//get config
@@ -49,13 +55,21 @@ func main() {
 	//memoryCache := cache.NewMemoryCache()
 	redisCache := cache.NewServerCacheRedis(jedis)
 	songService := services.NewSongService(songRepo)
-	authenService := services.NewAuthenService(helper.GetJWTInstance(), redisCache, accountRepository, config.AuthConfig())
+	//authenService := services.NewAuthenService(helper.GetJWTInstance(), redisCache, accountRepository, config.AuthConfig())
 	accountService := services.NewAccountService(accountRepository, redisCache, config.AuthConfig())
+
+	resp, err := client.UploadImage(context.Background(), cld, "img.png")
+	if err != nil {
+		fmt.Println("err ")
+		fmt.Println(err)
+	}
+	e, _ := json.Marshal(resp)
+	fmt.Println(string(e))
 	// Init w
 	gin.SetMode(gin.TestMode)
 	router := gin.Default()
 
-	router.Use(middleware.CORSMiddleware())
+	//router.Use(middleware.CORSMiddleware())
 	api := router.Group("/api")
 	healthAPI := router.Group("/")
 	healthAPI.GET("/info", getAll)
@@ -67,7 +81,7 @@ func main() {
 	v1.InitRoutes(
 		api,
 		songService,
-		authenService,
+		//authenService,
 		accountService,
 	)
 	glog.Infof("runing on port: %d ", 8080)

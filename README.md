@@ -2,4 +2,4 @@
 
 JWT Authentication flow
 
-![img.png](img.png)
+![img.png](client/img.png)
