@@ -5,12 +5,13 @@ import (
 	"fmt"
 	"github.com/golang/glog"
 	"github.com/google/uuid"
-	"spotify/cache"
-	"spotify/config"
-	"spotify/dto"
-	"spotify/helper/common"
-	"spotify/models"
-	"spotify/repositories"
+	"github.com/truongnh28/environment-be/cache"
+	"github.com/truongnh28/environment-be/config"
+	"github.com/truongnh28/environment-be/dto"
+	"github.com/truongnh28/environment-be/helper/common"
+	"github.com/truongnh28/environment-be/models"
+	"github.com/truongnh28/environment-be/converters"
+	"github.com/truongnh28/environment-be/repositories"
 	"time"
 )
 
@@ -36,25 +37,21 @@ CountWithFilter(
 
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
-	Update(ctx context.Context, username string, req dto.UpdateAccountRequest) common.SubReturnCode
 	Create(ctx context.Context, message dto.CreateReportRequest) dto.CreateReportResponse
-	FindByUserName(ctx context.Context, username string) (dto.Account, common.SubReturnCode)
+	GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse
+	List(ctx context.Context, message dto.ListReportsRequest) dto.ListReportsResponse
 }
 
-
-type SongService interface {
-	GetAllSong() ([]dto.Song, common.SubReturnCode)
-}
-
-func NewSongService(songRepo repositories.SongRepository) SongService {
-	return &songServiceImpl{
-		songRepo: songRepo,
+func NewReportService(reportRepo repositories.ReportRepository) ReportService {
+	return &reportService{
+		songRepo: reportRepo,
 	}
 }
 
-type songServiceImpl struct {
-	songRepo repositories.SongRepository
+type reportService struct {
+	reportRepo repositories.ReportRepository
 }
+
 
 func (s *songServiceImpl) GetAllSong() ([]dto.Song, common.SubReturnCode) {
 	var resp = make([]dto.Song, 0)
@@ -78,4 +75,9 @@ func (s *songServiceImpl) GetAllSong() ([]dto.Song, common.SubReturnCode) {
 		})
 	}
 	return resp, common.OK
+}
+
+func (r *reportService) Create(ctx context.Context, message dto.CreateReportRequest) dto.CreateReportResponse {
+	record := converters.From
+	report, err := r.reportRepo.Create(ctx, )
 }
