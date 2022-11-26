@@ -12,6 +12,8 @@ import (
 type UserService interface {
 	GetAllUser() ([]dto.User, common.SubReturnCode)
 	GetUserByUsername(ctx context.Context, username string) (dto.User, common.SubReturnCode)
+	Login(ctx context.Context, username, password string) (dto.User, common.SubReturnCode)
+	Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode)
 }
 
 func NewUserService(userRepo repositories.UserRepository) UserService {
@@ -27,7 +29,7 @@ type userServiceImpl struct {
 func (u *userServiceImpl) GetUserByUsername(ctx context.Context, username string) (dto.User, common.SubReturnCode) {
 	val, err := u.userRepo.GetUserByUsername(ctx, username)
 	if err != nil {
-		glog.Infoln("GetAllUser service err: ", err)
+		glog.Infoln("GetUserByUsername service err: ", err)
 		return dto.User{}, common.SystemError
 	}
 	return dto.User{
@@ -41,6 +43,25 @@ func (u *userServiceImpl) GetUserByUsername(ctx context.Context, username string
 		Email:      val.Email,
 		Phone:      val.Phone,
 	}, common.OK
+}
+
+func (u *userServiceImpl) Login(ctx context.Context, username, password string) (dto.User, common.SubReturnCode) {
+	_, err := u.userRepo.Login(ctx, username, password)
+	if err != nil {
+		glog.Infoln("Login service err: ", err)
+		return dto.User{}, common.UsernameOrPasswordIncorrect
+	}
+	return dto.User{}, common.OK
+}
+
+func (u *userServiceImpl) Register(ctx context.Context, register dto.Register) (dto.User, common.SubReturnCode) {
+
+	_, err := u.userRepo.Register(ctx, register)
+	if err != nil {
+		glog.Infoln("Register service err: ", err)
+		return dto.User{}, common.SystemError
+	}
+	return dto.User{}, common.OK
 }
 
 func (u *userServiceImpl) GetAllUser() ([]dto.User, common.SubReturnCode) {

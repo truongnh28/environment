@@ -20,3 +20,11 @@ type UserResponse struct {
 	Users []User
 	StatusError
 }
+
+type Register struct {
+	UserName   string `json:"username" gorm:"column:user_name"`
+	Password   string `json:"password" gorm:"column:pass_word"`
+	IsResolver bool   `json:"is_resolver" gorm:"column:is_resolver"`
+	Email      string `json:"email,omitempty" gorm:"column:email"`
+	Phone      string `json:"phone,omitempty" gorm:"column:phone"`
+}

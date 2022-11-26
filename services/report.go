@@ -2,9 +2,11 @@ package services
 
 import (
 	"context"
+	"github.com/truongnh28/environment-be/helper/common"
+
 	"github.com/golang/glog"
 	"github.com/truongnh28/environment-be/dto"
-	"github.com/truongnh28/environment-be/helper/common"
+	"github.com/truongnh28/environment-be/pkg/converter"
 	"github.com/truongnh28/environment-be/repositories"
 )
 
@@ -30,9 +32,10 @@ import (
 //go:generate mockgen -destination=./mocks/mock_$GOFILE -source=$GOFILE -package=mocks
 type ReportService interface {
 	Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error)
-	GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse
+	GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error)
 	List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error)
 	MapReportList(ctx context.Context) ([]dto.MapResp, common.SubReturnCode)
+	Update(ctx context.Context, message *dto.UpdateReportRequest) error
 }
 
 func NewReportService(reportRepository repositories.ReportRepository) ReportService {
@@ -46,18 +49,37 @@ type reportServiceImpl struct {
 }
 
 func (r *reportServiceImpl) Create(ctx context.Context, message *dto.CreateReportRequest) (*dto.CreateReportResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	record := converter.FromReportDTO(message)
+	report, err := r.reportRepository.Create(ctx, record)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := &dto.CreateReportResponse{
+		Report: *converter.ToReportDTO(report),
+	}
+	return resp, nil
 }
 
-func (r *reportServiceImpl) GetByID(ctx context.Context, message dto.GetReportByIDRequest) dto.GetReportByIDResponse {
-	//TODO implement me
-	panic("implement me")
+func (r *reportServiceImpl) Update(ctx context.Context, message *dto.UpdateReportRequest) error {
+	record := converter.FromReport(message.Record)
+	var params map[string]interface{}
+	params["status"] = message.Status
+	params["resolver_id"] = message.Resolver
+	err := r.reportRepository.UpdateWithMap(ctx, record, params)
+
+	return err
 }
 
-func (r *reportServiceImpl) Update(ctx context.Context, username string, req dto.UpdateAccountRequest) common.SubReturnCode {
-	//TODO implement me
-	panic("implement me")
+func (r *reportServiceImpl) GetByID(ctx context.Context, message *dto.GetReportByIDRequest) (*dto.GetReportByIDResponse, error) {
+	record, err := r.reportRepository.GetByID(ctx, message.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dto.GetReportByIDResponse{
+		Report: *converter.ToReportDTO(record),
+	}, nil
 }
 
 func (r *reportServiceImpl) List(ctx context.Context, message *dto.ListReportsRequest) (*dto.ListReportsResponse, error) {
